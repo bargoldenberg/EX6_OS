@@ -15,8 +15,8 @@ Queue.a: Queue.o
 AO.a: AO.o
 	ar -rcs AO.a AO.o
 
-Queue.o: Queue.c Queue.h
-	g++ -Wall -g -c Queue.c
+Queue.o: Queue.cpp Queue.h
+	g++ -Wall -g -c Queue.cpp
 
 AO.o: AO.c AO.h Queue.h
 	g++ -Wall -g -c AO.c -lpthread
