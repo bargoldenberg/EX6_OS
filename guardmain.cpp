@@ -11,15 +11,15 @@ size_t counter =0;
 pthread_mutex_t m;
 
 
-void increment(){
+void increment(int* id){
     guard g(&m);
     counter++;
-    cout<<counter<<endl;
+    cout<<counter<<", Thread #"<<*id<<endl;
 }
 
-void* threadrunner(void* arg){
+void* threadrunner(void* id){
     for(size_t i=0;i<1000;i++){
-        increment();
+        increment((int*)id);
     }
 }
 
@@ -28,8 +28,10 @@ int main(){
     pthread_mutex_init(&m,NULL);
     pthread_t t1;
     pthread_t t2;
-    pthread_create(&t1,NULL,threadrunner,NULL);
-    pthread_create(&t2,NULL,threadrunner,NULL);
+    int id1 = 1;
+    int id2 = 2;
+    pthread_create(&t1,NULL,threadrunner,&id1);
+    pthread_create(&t2,NULL,threadrunner,&id2);
     pthread_join(t1,NULL);
     pthread_join(t2,NULL);
     return 0;
