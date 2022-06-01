@@ -2,9 +2,11 @@
 #include <pthread.h>
 #include <unistd.h>
 using namespace std;
-class singleton{
+
+//Singleton Class.
+template<typename t> class singleton{
     private:
-        static singleton* myinstance;
+        static t* myinstance;
         static pthread_mutex_t m;
         singleton(){
             cout<<"constructor called"<<endl;
@@ -13,14 +15,16 @@ class singleton{
             cout<<"destructor called"<<endl;
         }
     public:
-        static singleton* Instance(){
+        static t* Instance(){
             if(myinstance == NULL){
                 pthread_mutex_init(&m, NULL);
-                myinstance = new singleton();
+                pthread_mutex_lock(&m);
+                myinstance = new t();
+                pthread_mutex_unlock(&m);
             }
             return myinstance;
         }
-        static void destroy(){
+        static void Destroy(){
             if(myinstance != NULL){
                 pthread_mutex_destroy(&m);
                 delete myinstance;
