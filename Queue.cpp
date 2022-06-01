@@ -13,12 +13,22 @@ typedef struct _node{
     struct _node *next;
 } node;
 
+/**
+ * @brief Create a Node object
+ * 
+ * @return node* 
+ */
 node* createNode(){
     node* n = (node*)malloc(sizeof(node));
     n->next = NULL;
     return n;
 }
 
+/**
+ * @brief Destroy the node object
+ * 
+ * @param n 
+ */
 void destroyNode(node* n){
     free(n);
 }
@@ -97,7 +107,6 @@ void* deQ(queue* q){
     q->size--;
   
     pthread_mutex_unlock(&(q->lock));
-    //pthread_cond_destroy(&(q->cond));
     return data;
 }
 
