@@ -1,6 +1,4 @@
-all:  main main1 client guard singleton
-main: main.o  Queue.a Queue.h 
-	g++ -Wall -g -o main main.o Queue.a 
+all: main1 client guard singleton
 
 main1: main1.o Queue.a Queue.h AO.a AO.h
 	g++ -Wall -g -o main1 main1.o Queue.a AO.a -lpthread
@@ -27,9 +25,6 @@ Queue.o: Queue.cpp Queue.h
 guard.o: guard.cpp
 	g++ -Wall -g -c guard.cpp
 
-# guardmain.o: guardmain.cpp guard.cpp
-# 	g++ -Wall -g -c guardmain.cpp
-
 singleton.o: singleton.cpp
 	g++ -Wall -g -c singleton.cpp
 
@@ -42,10 +37,7 @@ client: client.cpp
 main1.o: main1.cpp Queue.h AO.h
 	g++ -Wall -g -c main1.cpp -lpthread
 
-main.o: main.c Queue.h 
-	g++ -Wall -g -c main.c 
-
 .PHONY: clean#.PHONY means that clean is not a file.
 clean:
-	rm -f *.o *.a  main main1 client guard singleton
+	rm -f *.o *.a  main1 client guard singleton
 
