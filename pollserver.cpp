@@ -15,7 +15,7 @@
  #include "reactor.h" 
  #include <pthread.h>
   
- #define PORT "9034"   // Port we're listening on 
+ #define PORT "3491"   // Port we're listening on 
 typedef struct _pollfd {
         int fd;         // the socket descriptor
         short events;   // bitmap of events we're interested in

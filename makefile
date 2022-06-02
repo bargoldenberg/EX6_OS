@@ -31,8 +31,8 @@ Queue.o: Queue.cpp Queue.h
 guard.o: guard.cpp
 	g++ -Wall -g -c guard.cpp
 
-reactor.o: reactor.c
-	gcc -Wall -g -c reactor.c
+reactor.o: reactor.c reactor.h
+	g++ -Wall -g -c reactor.c -lpthread
 
 singleton.o: singleton.cpp
 	g++ -Wall -g -c singleton.cpp

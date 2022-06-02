@@ -4,14 +4,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <pthread.h>
-typedef struct _pollfd {
-        int fd;         // the socket descriptor
-        short events;   // bitmap of events we're interested in
-        short revents;  // when poll() returns, bitmap of events that occurred
-} pollfd;
 
 typedef struct _reactor{
-    pollfd fds[256];
+    struct pollfd fds[256];
     void (*funcs[256])(void*);
     int size;
     pthread_t thread_id;
@@ -24,7 +19,7 @@ void* thread_runner(void* arg){
         int i = poll(r->fds, r->size, -1);
         for(i=0;i<r->size;i++){
             if(r->fds[i].revents & POLLIN){
-                r->funcs[i]((r->fds[i].fd));
+                r->funcs[i](&(r->fds[i].fd));
             }
         }
     }
