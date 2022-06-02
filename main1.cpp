@@ -30,7 +30,6 @@ queue* q3 = createQ();
 
 //Functions for pipline
 void ceaser_cypher(void* data){
-    printf("33\n");
     int i;
     char* str = (char*)data;
     for(i=0;i<strlen(str);i++){
@@ -42,7 +41,6 @@ void ceaser_cypher(void* data){
             str[i] = (c-'A'+1)%26+'A';
         }
     }
-    printf("in ceaser %s\n",str);
 }
 
 void switchCase(void* str){
@@ -56,7 +54,6 @@ void switchCase(void* str){
             data[i] = (data[i]-'A')+'a';
         }
     }
-    printf("in switch case %s\n",data);
 }
 
 void enQ2(void* str){
@@ -109,7 +106,8 @@ void *get_in_addr(struct sockaddr *sa)
 void *connection_handler(void *pClient)
 {
     int new_fd = *((int*)pClient);
-    free(pClient); // No more use for the pointer -> free as fast as we can so we wont miss that.    
+    free(pClient); // No more use for the pointer -> free as fast as we can so we wont miss that. 
+       
     //Active Object initialization
     activeObject* AO1=NULL;
     activeObject* AO2=NULL;
@@ -119,12 +117,10 @@ void *connection_handler(void *pClient)
         bzero(buffer,1024);
         printf("Waiting for client to send data fd: %d\n",new_fd);
         int n = recv(new_fd,buffer,1024,0);
-        printf("The Message is %s\n",buffer);
         if(!strncmp(buffer,"EXIT",4)){
             break;
         }
         enQ(q1,buffer);
-        printf("enqueued\n");
         updatefd(q3,new_fd);
         printf("%d\n",isEmpty(q1));
         if(AO1==NULL||AO2==NULL||AO3==NULL){

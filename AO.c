@@ -12,7 +12,6 @@
 typedef struct _active_object {
     queue *q;
     pthread_t thread;
-    int fd;
     void (*AOfunc1)(void *);
     void (*AOfunc2)(void *);
 }activeObject;
