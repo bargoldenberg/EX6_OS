@@ -17,7 +17,7 @@ Queue:Queue.a
 AO:AO.a
 
 libdesign.so: guard.o singleton.o reactor.o Queue.o AO.o
-	$(CC) -shared -fPIC -o libdesign.so guard.o singleton.o reactor.o Queue.o AO.o
+	g++ -shared -fPIC -o libdesign.so guard.o singleton.o reactor.o Queue.o AO.o
 
 Queue.a: Queue.o
 	ar -rcs Queue.a Queue.o

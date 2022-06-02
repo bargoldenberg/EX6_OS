@@ -1,6 +1,6 @@
 /** 
   * pollserver.c -- a cheezy multiperson chat server 
-  * A basic Chat server implementation using my reactor and beej server template 
+  * 
  */ 
   
  #include <stdio.h> 
@@ -49,8 +49,8 @@ Reactor* r;
   * @return listening socket 
   */ 
  int get_listener_socket() { 
-     int listener;     // Listening socket descriptor 
-     int yes = 1;        // For setsockopt() SO_REUSEADDR, below 
+     int listener;    
+     int yes = 1;       
      int rv; 
   
      struct addrinfo hints, *ai, *p; 
@@ -144,14 +144,8 @@ Reactor* r;
                           INET6_ADDRSTRLEN), newfd); 
      } 
  } 
-void onExit(int signal){ 
-     DeleteReactor(r); 
-     exit(0); 
- } 
   
  int main() { 
-  
-     signal(SIGINT, onExit); 
      r = (Reactor*) NewReactor(); 
      int listener = get_listener_socket(); 
      if (listener == -1) { 
