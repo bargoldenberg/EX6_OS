@@ -16,7 +16,7 @@
  #include <pthread.h>
  #include <poll.h>
   
- #define PORT "3491"   // Port we're listening on 
+ #define PORT "3491" 
 
 //REACTOR_STRUCT
 typedef struct _reactor{
@@ -30,12 +30,7 @@ typedef struct _reactor{
 Reactor* r; 
   
 
-  
- /** 
-  * Get sockaddr, IPv4 or IPv6: 
-  * @param sa 
-  * @return return the ip of the sockaddr struct 
-  */ 
+
  void *get_in_addr(struct sockaddr *sa) { 
      if (sa->sa_family == AF_INET) { 
          return &(((struct sockaddr_in *) sa)->sin_addr); 
@@ -44,10 +39,7 @@ Reactor* r;
      return &(((struct sockaddr_in6 *) sa)->sin6_addr); 
  } 
   
- /** 
-  * This function initial a new listener fd 
-  * @return listening socket 
-  */ 
+
  int get_listener_socket() { 
      int listener;    
      int yes = 1;       
@@ -55,7 +47,7 @@ Reactor* r;
   
      struct addrinfo hints, *ai, *p; 
   
-     // Get us a socket and bind it 
+
      memset(&hints, 0, sizeof hints); 
      hints.ai_family = AF_UNSPEC; 
      hints.ai_socktype = SOCK_STREAM; 
@@ -71,7 +63,7 @@ Reactor* r;
              continue; 
          } 
   
-         // Lose the pesky "address already in use" error message 
+   
          setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)); 
   
          if (bind(listener, p->ai_addr, p->ai_addrlen) < 0) { 
@@ -82,14 +74,12 @@ Reactor* r;
          break; 
      } 
   
-     freeaddrinfo(ai); // All done with this 
+     freeaddrinfo(ai); 
   
-     // If we got here, it means we didn't get bound 
      if (p == NULL) { 
          return -1; 
      } 
   
-     // Listen 
      if (listen(listener, 10) == -1) { 
          return -1; 
      } 
@@ -97,10 +87,7 @@ Reactor* r;
      return listener; 
  } 
   
- /** 
-  * This function is used to handle the new connection
-  * @param newfd - client file descriptor 
-  */
+
 
  void handleClient(void *vfd) { 
      char buff[1024]; 
@@ -127,8 +114,8 @@ Reactor* r;
   
  void newClient(void *vlistener) { 
      int* listener = (int*)vlistener;
-     int newfd; // Newly accept()ed socket descriptor 
-     struct sockaddr_storage remoteaddr; // Client address 
+     int newfd; 
+     struct sockaddr_storage remoteaddr;
      char remoteIP[INET6_ADDRSTRLEN]; 
      socklen_t addrlen = sizeof(remoteaddr); 
   
