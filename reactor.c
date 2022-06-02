@@ -65,6 +65,7 @@ void RemoveHandler(void *reactor, int fd){
             r->fds[i].events = 0;
             r->funcs[i] = NULL;
             r->size--;
+            close(fd);
             return;
         }
     }
