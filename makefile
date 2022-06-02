@@ -1,4 +1,4 @@
-all: main1 client guard singleton pollserver
+all: reactor.o main1 client guard singleton pollserver 
 
 main1: main1.o Queue.a Queue.h AO.a AO.h
 	g++ -Wall -g -o main1 main1.o Queue.a AO.a -lpthread
@@ -15,6 +15,9 @@ singleton: singleton.o
 Queue:Queue.a
 
 AO:AO.a
+
+libdesign.so: guard.o singleton.o reactor.o Queue.o AO.o
+	$(CC) -shared -fPIC -o libdesign.so guard.o singleton.o reactor.o Queue.o AO.o
 
 Queue.a: Queue.o
 	ar -rcs Queue.a Queue.o

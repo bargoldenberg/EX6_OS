@@ -1,5 +1,4 @@
-struct _pollfd;
-typedef struct _pollfd pollfd;
+
 struct _reactor;
 typedef struct _reactor Reactor;
 

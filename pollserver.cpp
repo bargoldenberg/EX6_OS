@@ -14,27 +14,22 @@
  #include<signal.h> 
  #include "reactor.h" 
  #include <pthread.h>
+ #include <poll.h>
   
  #define PORT "3491"   // Port we're listening on 
-typedef struct _pollfd {
-        int fd;         // the socket descriptor
-        short events;   // bitmap of events we're interested in
-        short revents;  // when poll() returns, bitmap of events that occurred
-} pollfd;
 
+//REACTOR_STRUCT
 typedef struct _reactor{
-    pollfd fds[256];
+    struct pollfd fds[256];
     void (*funcs[256])(void*);
     int size;
     pthread_t thread_id;
 } Reactor;
 
- Reactor* r; /// global reactor to be use to manage the communication of the server 
+//GLOBAL VARIABLES
+Reactor* r; 
   
- void when_exit(int signal){ 
-     DeleteReactor(r); 
-     exit(0); 
- } 
+
   
  /** 
   * Get sockaddr, IPv4 or IPv6: 
@@ -103,25 +98,26 @@ typedef struct _reactor{
  } 
   
  /** 
-  * This function attached to the reactor to handle the communication from the client 
-  * @param newfd - the client fd 
-  */ 
- void handle_client(void *vfd) { 
+  * This function is used to handle the new connection
+  * @param newfd - client file descriptor 
+  */
+
+ void handleClient(void *vfd) { 
      char buff[1024]; 
      int* newfd = (int*)vfd;
      memset(buff, '\0', 1024); 
      int bytes = recv(*newfd, buff, 1024,0); 
      if (bytes < 0) { 
-         perror("read from fd error"); 
+         perror("receive error"); 
      } 
      else if (bytes == 0){ 
-         printf("pollserver: client seems to be off, remove his handler... \n"); 
+         printf("pollserver: client disconected \n"); 
          RemoveHandler((void *)r, *newfd); 
          close(*newfd); 
      } 
      else { 
          for (int i = 0; i < r->size; ++i) { 
-             if (r->funcs[i] == handle_client && r->fds[i].fd != *newfd) { // if the fd is clientfd then broadcast 
+             if ((r->funcs[i] == handleClient)&&(r->fds[i].fd != *newfd)) {  
                  send(r->fds[i].fd, buff, bytes, 0); 
              } 
          } 
@@ -129,11 +125,7 @@ typedef struct _reactor{
   
  } 
   
- /** 
-  * This function is handler function for the listener fd 
-  * @param listener - the listener fd 
-  */ 
- void accept_clients(void *vlistener) { 
+ void newClient(void *vlistener) { 
      int* listener = (int*)vlistener;
      int newfd; // Newly accept()ed socket descriptor 
      struct sockaddr_storage remoteaddr; // Client address 
@@ -145,30 +137,28 @@ typedef struct _reactor{
      if (newfd == -1) { 
          perror("accept"); 
      } else { 
-         installHandler(r,handle_client, newfd); 
+         installHandler(r,handleClient, newfd); 
   
          printf("pollserver: new connection from %s on socket %d\n", 
                 inet_ntop(remoteaddr.ss_family, get_in_addr((struct sockaddr *) &remoteaddr), remoteIP, 
                           INET6_ADDRSTRLEN), newfd); 
      } 
  } 
-  
+void onExit(int signal){ 
+     DeleteReactor(r); 
+     exit(0); 
+ } 
   
  int main() { 
   
-     signal(SIGINT, when_exit); 
-  
+     signal(SIGINT, onExit); 
      r = (Reactor*) NewReactor(); 
-  
-     // Set up and get a listening socket 9
      int listener = get_listener_socket(); 
-  
      if (listener == -1) { 
          fprintf(stderr, "error getting listening socket\n"); 
          exit(1); 
      } 
-  
-     installHandler(r, accept_clients, listener); 
+     installHandler(r, newClient, listener); 
      printf("pollserver: waiting for new connections...\n"); 
      pthread_join((r->thread_id), NULL); 
      close(listener); 
